@@ -1,46 +1,46 @@
 package test;
 
-import timer.listener.TimerListener;
+import timer.task.Task;
 
 public class TimerFactory {
     
-    public static TimerListener newTimerListenerAsOneSec() {
-        return new TimerListener() {
+    public static Task newTimerListenerAsOneSec() {
+        return new Task() {
             @Override
-            public void timeOut() {
+            public void exec() {
                 System.out.println("[Timer] ======== 1s");
             }
 
             @Override
-            public int getTimerLen() {
+            public int getExecutPeriod() {
                 return 1000;
             }
         };
     }
     
-    public static TimerListener newTimerListenerAsTowSec() {
-        return new TimerListener() {
+    public static Task newTimerListenerAsTowSec() {
+        return new Task() {
             @Override
-            public void timeOut() {
+            public void exec() {
                 System.out.println("[Timer] ======== 2s");
             }
 
             @Override
-            public int getTimerLen() {
+            public int getExecutPeriod() {
                 return 2000;
             }
         };
     }
 
-    public static TimerListener newTimerListenerAsFiveSec() {
-        return new TimerListener() {
+    public static Task newTimerListenerAsFiveSec() {
+        return new Task() {
             @Override
-            public void timeOut() {
+            public void exec() {
                 System.out.println("[Timer] ======== 5s");
             }
 
             @Override
-            public int getTimerLen() {
+            public int getExecutPeriod() {
                 return 5000;
             }
         };

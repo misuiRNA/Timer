@@ -1,13 +1,14 @@
 package test;
 
-import timer.Timer;
 import static test.TimerFactory.*;
+
+import timer.core.Engine;
 
 public class TimerTest {
     
     
     public static void main(String args[]) {
-        Timer clock = Timer.instance();
+        Engine clock = Engine.instance();
         
         clock.register(newTimerListenerAsOneSec());
         clock.register(newTimerListenerAsTowSec());
