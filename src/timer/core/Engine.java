@@ -4,15 +4,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import timer.task.Task;
+import timer.task.TaskProcessor;
+import timer.task.TaskQueue;
 
 public class Engine {
     private static int DEFAULT_TIMER_UNIT = 1;
 	
     private static Engine engine = new Engine();; 
     private Map<Integer, Timer> timers = new HashMap<Integer, Timer>();
+    private TaskQueue taskqueue;
+    private TaskProcessor processor;
     
     private Engine() {
         timers.clear();
+        taskqueue = new TaskQueue();
+        processor = new TaskProcessor(taskqueue);
     }
     
     public static Engine instance() {
@@ -29,6 +35,7 @@ public class Engine {
     }
     
     public void start() {
+    	processor.startWithNewThread();
         new CoreDriver(DEFAULT_TIMER_UNIT).drive();
     }
     
@@ -36,7 +43,7 @@ public class Engine {
         int timerLen = task.getExecutPeriod();
         Timer timer = timers.get(timerLen);
         if(timer == null) {
-            timer = new Timer(timerLen);
+            timer = new Timer(timerLen, taskqueue);
             timers.put(timerLen, timer);
         }
         timer.register(task);
