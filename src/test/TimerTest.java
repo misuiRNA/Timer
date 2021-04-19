@@ -8,7 +8,7 @@ public class TimerTest {
     
     
     public static void main(String args[]) {
-        Engine clock = Engine.instance();
+        Engine clock = new Engine();
         
         clock.register(newTimerListenerAsOneSec());
         clock.register(newTimerListenerAsTowSec());

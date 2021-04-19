@@ -22,9 +22,9 @@ public class TimeCore {
 	}
 
 	public int timeToCount(int timeLen) {
-//		if (timeLen % timerUnit != 0) {
-//			throw new Exception("timer length is invalid !");
-//		}
+		if (timeLen % timerUnit != 0) {
+			throw new RuntimeException("timer length is invalid !");
+		}
 		return timeLen / timerUnit;
 	}
 }

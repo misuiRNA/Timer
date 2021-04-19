@@ -4,23 +4,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import timer.task.Task;
-import timer.task.Worker;
 import timer.task.TaskQueue;
+import timer.task.Worker;
 
 public class Engine {
-    private static Engine engine; 
     private Map<Integer, Trigger> triggerMap = new HashMap<Integer, Trigger>();
-    private TimeCore timeCore = new TimeCore();
     private Worker worker = new Worker(new TaskQueue());;
+    private TimeCore timeCore;
     
-    public static Engine instance() {
-        if (engine == null) {
-            engine = new Engine();
-        }
-        return engine;
+    public Engine() { 
+    	timeCore = new TimeCore();
     }
     
-    private Engine() { }
+    public Engine(int timeUnit) { 
+    	timeCore = new TimeCore(timeUnit);
+    }
     
     public void start() {
     	worker.start();
