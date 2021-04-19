@@ -1,14 +1,14 @@
 package timer.task;
 
-public class TaskProcessor implements Runnable {
+public class Worker implements Runnable {
 	
 	TaskQueue taskQueue;
 	
-	public TaskProcessor(TaskQueue taskQueue) {
+	public Worker(TaskQueue taskQueue) {
 		this.taskQueue = taskQueue;
 	}
 	
-	public void startWithNewThread() {
+	public void start() {
 		new Thread(this).start();
 	}
 
@@ -21,5 +21,9 @@ public class TaskProcessor implements Runnable {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public TaskQueue getTaskQueue() {
+		return taskQueue;
 	}
 }

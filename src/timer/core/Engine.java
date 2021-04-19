@@ -4,82 +4,52 @@ import java.util.HashMap;
 import java.util.Map;
 
 import timer.task.Task;
-import timer.task.TaskProcessor;
+import timer.task.Worker;
 import timer.task.TaskQueue;
 
 public class Engine {
-    private static int DEFAULT_TIMER_UNIT = 1;
-	
-    private static Engine engine = new Engine();; 
-    private Map<Integer, Timer> timers = new HashMap<Integer, Timer>();
-    private TaskQueue taskqueue;
-    private TaskProcessor processor;
-    
-    private Engine() {
-        timers.clear();
-        taskqueue = new TaskQueue();
-        processor = new TaskProcessor(taskqueue);
-    }
+    private static Engine engine; 
+    private Map<Integer, Trigger> triggerMap = new HashMap<Integer, Trigger>();
+    private TimeCore timeCore = new TimeCore();
+    private Worker worker = new Worker(new TaskQueue());;
     
     public static Engine instance() {
-        if(engine == null) {
+        if (engine == null) {
             engine = new Engine();
         }
         return engine;
     }
     
-    private void timeGoing() {
-        for(Timer timer : timers.values()) {
-            timer.timeGoing();
-        }
-    }
+    private Engine() { }
     
     public void start() {
-    	processor.startWithNewThread();
-        new CoreDriver(DEFAULT_TIMER_UNIT).drive();
+    	worker.start();
+    	while (true) {
+    		timeCore.going();
+    		for (Trigger trigger : triggerMap.values()) {
+    		    trigger.update();
+    		}
+    	}
     }
     
     public void register(Task task) {
-        int timerLen = task.getExecutPeriod();
-        Timer timer = timers.get(timerLen);
-        if(timer == null) {
-            timer = new Timer(timerLen, taskqueue);
-            timers.put(timerLen, timer);
+        int timerLen = task.period();
+        Trigger trigger = triggerMap.get(timerLen);
+        if (trigger == null) {
+            trigger = new Trigger(timeCore.timeToCount(timerLen), worker.getTaskQueue());
+            triggerMap.put(timerLen, trigger);
         }
-        timer.register(task);
+        trigger.register(task);
     }
     
     public void unRegister(Task task) {
-        Timer timer = timers.get(task.getExecutPeriod());
-        if(timer == null) {
+        Trigger trigger = triggerMap.get(task.period());
+        if (trigger == null) {
             return;
         }
-        timer.unRegister(task);
-        if(timer.useful()) {
-            timers.remove(task.getExecutPeriod());
+        trigger.unRegister(task);
+        if (!trigger.useful()) {
+            triggerMap.remove(task.period());
         }
-    }
-    
-    class CoreDriver {
-    	private int timerUnit;
-        
-    	CoreDriver(int timerUnit) {
-    		this.timerUnit = timerUnit;
-    	}
-    	
-        public void drive() {
-            while(true) {
-                try {
-                    Thread.sleep(timerUnit);
-                    timeGoing();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-    
-    static int timeLenToTimeUnitTimes(int timerLen) {
-        return timerLen / DEFAULT_TIMER_UNIT;
     }
 }

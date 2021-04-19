@@ -12,7 +12,7 @@ public class TimerFactory {
             }
 
             @Override
-            public int getExecutPeriod() {
+            public int period() {
                 return 1000;
             }
         };
@@ -26,7 +26,7 @@ public class TimerFactory {
             }
 
             @Override
-            public int getExecutPeriod() {
+            public int period() {
                 return 2000;
             }
         };
@@ -40,7 +40,7 @@ public class TimerFactory {
             }
 
             @Override
-            public int getExecutPeriod() {
+            public int period() {
                 return 5000;
             }
         };
