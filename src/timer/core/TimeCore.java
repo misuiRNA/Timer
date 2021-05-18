@@ -1,16 +1,16 @@
 package timer.core;
 
 public class TimeCore {
-    private final static int DEFAULT_TIMER_UNIT = 1;
+    final static int LEAST_TIMER_UNIT = 1;
     
     private final int timerUnit;
     
     public TimeCore(int timerUnit) {
-        this.timerUnit = timerUnit < DEFAULT_TIMER_UNIT ? DEFAULT_TIMER_UNIT : timerUnit;
+        this.timerUnit = timerUnit < LEAST_TIMER_UNIT ? LEAST_TIMER_UNIT : timerUnit;
     }
     
     public TimeCore() {
-        this(DEFAULT_TIMER_UNIT);
+        this(LEAST_TIMER_UNIT);
     }
     
     public void going() {

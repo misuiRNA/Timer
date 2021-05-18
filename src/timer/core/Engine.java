@@ -9,19 +9,25 @@ import timer.task.Worker;
 
 public class Engine {
     private Map<Integer, Trigger> triggerMap = new HashMap<Integer, Trigger>();
-    private Worker worker = new Worker(new TaskQueue());;
+    TaskQueue taskQueue = new TaskQueue();
+    private Worker workers[];
     private TimeCore timeCore;
     
-    public Engine() { 
-        timeCore = new TimeCore();
+    public Engine(int workerNum) { 
+        this(TimeCore.LEAST_TIMER_UNIT, workerNum);
     }
     
-    public Engine(int timeUnit) { 
+    public Engine(int timeUnit, int workerNum) { 
         timeCore = new TimeCore(timeUnit);
+        workers = new Worker[workerNum];
     }
     
     public void start() {
-        worker.start();
+        for (int loop = 0; loop < workers.length; ++loop) {
+            workers[loop] = new Worker(taskQueue);
+            workers[loop].start();
+        }
+        
         while (true) {
             timeCore.going();
             for (Trigger trigger : triggerMap.values()) {
@@ -34,7 +40,7 @@ public class Engine {
         int timerLen = task.period();
         Trigger trigger = triggerMap.get(timerLen);
         if (trigger == null) {
-            trigger = new Trigger(timeCore.timeToCount(timerLen), worker.getTaskQueue());
+            trigger = new Trigger(timeCore.timeToCount(timerLen), taskQueue);
             triggerMap.put(timerLen, trigger);
         }
         trigger.register(task);

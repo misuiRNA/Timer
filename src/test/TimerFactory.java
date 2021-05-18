@@ -4,11 +4,21 @@ import timer.task.Task;
 
 public class TimerFactory {
     
+    private static void threadBlock() {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
     public static Task newTimerListenerAsOneSec() {
         return new Task() {
             @Override
             public void exec() {
                 System.out.println("[Timer] ======== 1s");
+                threadBlock();
             }
 
             @Override
@@ -22,6 +32,7 @@ public class TimerFactory {
         return new Task() {
             @Override
             public void exec() {
+                threadBlock();
                 System.out.println("[Timer] ======== 2s");
             }
 
@@ -36,6 +47,7 @@ public class TimerFactory {
         return new Task() {
             @Override
             public void exec() {
+                threadBlock();
                 System.out.println("[Timer] ======== 5s");
             }
 
