@@ -30,7 +30,7 @@ public final class Trigger {
 
     private void trigger() {
         for(Task task : tasks) {
-        	taskQueue.push(task);
+            taskQueue.push(task);
         }
     }
 

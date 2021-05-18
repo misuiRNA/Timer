@@ -13,21 +13,21 @@ public class Engine {
     private TimeCore timeCore;
     
     public Engine() { 
-    	timeCore = new TimeCore();
+        timeCore = new TimeCore();
     }
     
     public Engine(int timeUnit) { 
-    	timeCore = new TimeCore(timeUnit);
+        timeCore = new TimeCore(timeUnit);
     }
     
     public void start() {
-    	worker.start();
-    	while (true) {
-    		timeCore.going();
-    		for (Trigger trigger : triggerMap.values()) {
-    		    trigger.update();
-    		}
-    	}
+        worker.start();
+        while (true) {
+            timeCore.going();
+            for (Trigger trigger : triggerMap.values()) {
+                trigger.update();
+            }
+        }
     }
     
     public void register(Task task) {
