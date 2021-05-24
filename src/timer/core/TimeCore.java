@@ -21,7 +21,7 @@ public class TimeCore {
         }
     }
 
-    public int timeToCount(int timeLen) {
+    public long timeToCount(long timeLen) {
         if (timeLen % timerUnit != 0) {
             throw new RuntimeException("timer length is invalid !");
         }

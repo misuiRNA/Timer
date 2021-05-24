@@ -8,12 +8,12 @@ import timer.task.Task;
 import timer.task.TaskQueue;
 
 public final class Trigger {
-    private int initCount;
-    private int counter;
+    private long initCount;
+    private long counter;
     private final List<Task> tasks = new ArrayList<Task>();
     private final TaskQueue taskQueue;
 
-    public Trigger(int maxCount, TaskQueue taskQueue) {
+    public Trigger(long maxCount, TaskQueue taskQueue) {
         this.initCount = maxCount;
         this.counter = maxCount;
         tasks.clear();

@@ -1,11 +1,21 @@
 package timer.task;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Worker implements Runnable {
     
-    TaskQueue taskQueue;
+    private static long workerSegNumber = 0;
+    
+    List<TaskQueue> priorTaskQueues;
+    TaskQueue commQueue;
+    private long id;
     
     public Worker(TaskQueue taskQueue) {
-        this.taskQueue = taskQueue;
+        priorTaskQueues = new ArrayList<TaskQueue>(8);
+        commQueue = taskQueue;
+        id = workerSegNumber;
+        ++workerSegNumber;
     }
     
     public void start() {
@@ -16,14 +26,34 @@ public class Worker implements Runnable {
     public void run() {
         while (true) {
             try {
-                taskQueue.poll().exec();;
+                // TODO try to optimize
+                Task task = takeTask();
+                if (null == task && commQueue.hasMore()) {
+                    task = commQueue.poll();
+                }
+                if (null != task) {
+                    task.exec();
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
     
-    public TaskQueue getTaskQueue() {
-        return taskQueue;
+    private Task takeTask() throws InterruptedException {
+        for (TaskQueue queue : priorTaskQueues) {
+            if (queue.hasMore()) {
+                return queue.poll();
+            }
+        }
+        return null;
+    }
+    
+    public long getId() {
+        return id;
+    }
+
+    public void takeOver(TaskQueue taskQueue) {
+        priorTaskQueues.add(taskQueue);
     }
 }

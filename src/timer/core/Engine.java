@@ -8,7 +8,7 @@ import timer.task.TaskQueue;
 import timer.task.Worker;
 
 public class Engine {
-    private Map<Integer, Trigger> triggerMap = new HashMap<Integer, Trigger>();
+    private Map<Long, Trigger> triggerMap = new HashMap<Long, Trigger>();
     TaskQueue taskQueue = new TaskQueue();
     private Worker workers[];
     private TimeCore timeCore;
@@ -20,11 +20,13 @@ public class Engine {
     public Engine(int timeUnit, int workerNum) { 
         timeCore = new TimeCore(timeUnit);
         workers = new Worker[workerNum];
+        for (int loop = 0; loop < workers.length; ++loop) {
+            workers[loop] = new Worker(taskQueue);
+        }
     }
     
     public void start() {
         for (int loop = 0; loop < workers.length; ++loop) {
-            workers[loop] = new Worker(taskQueue);
             workers[loop].start();
         }
         
@@ -37,11 +39,29 @@ public class Engine {
     }
     
     public void register(Task task) {
-        int timerLen = task.period();
-        Trigger trigger = triggerMap.get(timerLen);
+        long workerId = task.bindWorkerId();
+        if (workerId >= workers.length) {
+            throw new RuntimeException("Invalid worker id [workerId=" + workerId + "]");
+        }
+        // TODO try to optimize
+        long timerLen = task.period();
+        Trigger trigger = null;
+        if (workerId >= 0) {
+            for (Worker worker : workers) {
+                if (worker != null && worker.getId() == workerId) {
+                    TaskQueue taskQueue = new TaskQueue();
+                    worker.takeOver(taskQueue);
+                    trigger = new Trigger(timeCore.timeToCount(timerLen), taskQueue);
+                    triggerMap.put(timerLen, trigger);
+                }
+            }
+        } 
         if (trigger == null) {
-            trigger = new Trigger(timeCore.timeToCount(timerLen), taskQueue);
-            triggerMap.put(timerLen, trigger);
+            trigger = triggerMap.get(timerLen);
+            if (trigger == null) {
+                trigger = new Trigger(timeCore.timeToCount(timerLen), taskQueue);
+                triggerMap.put(timerLen, trigger);
+            }
         }
         trigger.register(task);
     }

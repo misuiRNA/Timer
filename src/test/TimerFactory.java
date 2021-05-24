@@ -1,5 +1,6 @@
 package test;
 
+import timer.task.AbstractTask;
 import timer.task.Task;
 
 public class TimerFactory {
@@ -13,46 +14,46 @@ public class TimerFactory {
     }
     
     
-    public static Task newTimerListenerAsOneSec() {
-        return new Task() {
+    public static Task newTimerListenerAsOneSec(long workerId) {
+        return new AbstractTask(workerId) {
             @Override
             public void exec() {
-                System.out.println("[Timer] ======== 1s");
+                System.out.println("[Timer][Worker-Id=" + Thread.currentThread().getId() + "] ======== 1s");
                 threadBlock();
             }
 
             @Override
-            public int period() {
+            public long period() {
                 return 1000;
             }
         };
     }
     
     public static Task newTimerListenerAsTowSec() {
-        return new Task() {
+        return new AbstractTask() {
             @Override
             public void exec() {
                 threadBlock();
-                System.out.println("[Timer] ======== 2s");
+                System.out.println("[Timer][Worker-Id=" + Thread.currentThread().getId() + "] ======== 2s");
             }
 
             @Override
-            public int period() {
+            public long period() {
                 return 2000;
             }
         };
     }
 
     public static Task newTimerListenerAsFiveSec() {
-        return new Task() {
+        return new AbstractTask() {
             @Override
             public void exec() {
                 threadBlock();
-                System.out.println("[Timer] ======== 5s");
+                System.out.println("[Timer][Worker-Id=" + Thread.currentThread().getId() + "]  ======== 5s");
             }
 
             @Override
-            public int period() {
+            public long period() {
                 return 5000;
             }
         };

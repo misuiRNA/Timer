@@ -28,5 +28,10 @@ public class TaskQueue {
         }
         return task;
     }
+
+   // TODO try to optimize - not thread safety 
+    public boolean hasMore() {
+        return tasks.size() > 0;
+    }
     
 }

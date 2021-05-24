@@ -1,7 +1,11 @@
 package timer.task;
 
+
+// TODO try to optimize - silly interface
 public interface Task {
     void exec();
 
-    int period();
+    long period();
+    
+    long bindWorkerId();
 }
