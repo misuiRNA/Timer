@@ -2,28 +2,38 @@ package timer.task;
 
 import java.util.LinkedList;
 
+import timer.utils.TimerLock;
+
 public class TaskQueue {
+    private static TimerLock global_lock = new TimerLock();
+    
     LinkedList<Task> tasks;
+    TimerLock lock;
     
     public TaskQueue() {
         tasks = new LinkedList<Task>();
+        lock = global_lock;
     }
     
     public void push(Task task) {
-        synchronized (tasks) {
-            final boolean needNotify = tasks.isEmpty(); 
+        synchronized (lock) {
             tasks.add(task);
-            if (needNotify) {
-                tasks.notify();
-            }
+            lock.increase();
+            // TODO try to optimize, do not notify every time
+            lock.notify();
         }
     }
     
+    // TODO checkout
     public Task poll() throws InterruptedException {
         Task task = null;
-        synchronized (tasks) {
-            while ((task = tasks.poll()) == null) {
-                tasks.wait();
+        synchronized (lock) {
+            if (lock.needLock()) {
+                lock.wait();
+            }
+            task = tasks.poll();
+            if (null != task) {
+                lock.decrease();
             }
         }
         return task;
@@ -33,5 +43,5 @@ public class TaskQueue {
     public boolean hasMore() {
         return tasks.size() > 0;
     }
-    
 }
+

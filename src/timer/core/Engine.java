@@ -55,7 +55,7 @@ public class Engine {
                     triggerMap.put(timerLen, trigger);
                 }
             }
-        } 
+        }
         if (trigger == null) {
             trigger = triggerMap.get(timerLen);
             if (trigger == null) {

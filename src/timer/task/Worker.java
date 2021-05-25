@@ -26,14 +26,7 @@ public class Worker implements Runnable {
     public void run() {
         while (true) {
             try {
-                // TODO try to optimize
-                Task task = takeTask();
-                if (null == task && commQueue.hasMore()) {
-                    task = commQueue.poll();
-                }
-                if (null != task) {
-                    task.exec();
-                }
+                takeTask().exec();;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -41,12 +34,22 @@ public class Worker implements Runnable {
     }
     
     private Task takeTask() throws InterruptedException {
+        Task task = null;
+         while ((task = takeTaskNotSafe()) == null)
+         {
+             // do nothing
+         }
+        return task;
+    }
+
+    // TODO checkout
+    private Task takeTaskNotSafe() throws InterruptedException {
         for (TaskQueue queue : priorTaskQueues) {
             if (queue.hasMore()) {
                 return queue.poll();
             }
         }
-        return null;
+        return commQueue.poll();
     }
     
     public long getId() {
